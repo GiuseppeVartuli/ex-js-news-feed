@@ -2,8 +2,82 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
-
+#title {
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+  font-size: 50px;
+}
 .container {
   background: #023047;
+  height: 100vh;
+}
+
+nav {
+  background: white;
+  width: 30%;
+  height: 70px;
+  display: flex;
+  margin-left: 30%;
+  align-items: center;
+  padding-left: 30px;
+  justify-content: space-between;
+}
+.saved {
+  padding-right: 20px;
+}
+img {
+  width: calc(100% - 30px);
+}
+.cards {
+  background: white;
+  width: 30%;
+  margin-top: 10px;
+  margin-left: 30%;
+  padding-left: 30px;
+}
+.tags {
+  display: flex;
+  padding-bottom: 10px;
+}
+.tag {
+  color: white;
+  width: 50px;
+  height: 30px;
+  padding: 5px;
+
+  margin-top: 5px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  background: green;
+}
+
+h2 {
+  width: 90%;
+  padding-top: 10px;
+}
+#text {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+i {
+  padding-top: 20px;
+  font-size: 25px;
+}
+.top_card {
+  display: flex;
+}
+button {
+  border: none;
+  background: none;
+}
+
+.bookmark_full {
+  display: none;
 }

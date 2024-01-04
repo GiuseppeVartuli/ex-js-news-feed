@@ -80,10 +80,9 @@ for (let i = 0; i < news.length; i++) {
             ${article.content}
           </p>
           <img src="${article.img}" alt="Papera_di_gomma" />
-          <div class="tags">
-            <div class="tag">${article.tags}</div>
-            <div class="tag">${article.tags}</div>
-          </div>
+            ${article.tags
+              .map((tag) => `<div class="tags">${tag}</div>`)
+              .join("")}
         </div>
       </div>
       `;

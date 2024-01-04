@@ -21,34 +21,45 @@
   </head>
   <body>
     <div class="container">
-      <div class="row d-flex justify-content-center">
-        <h1 class="text-light d-flex justify-content-center">News Feed</h1>
-        <div class="col-10 bg-body-secondary">
-          <div class="d-flex justify-content-between">
-            <div>
-              <label class="my-4" for="inlineFormCustomSelectPref"
-                >Filtra per tags:
-              </label>
-              <select class="custom-select my-1 mr-sm-2" id="age">
-                <option value="adult" selected>Tutti i tags</option>
-                <option value="policy">Politica</option>
-                <option value="geography">Geo</option>
-                <option value="tech">Tech</option>
-                <option value="travel">Viaggi</option>
-                <option value="cooking">Cucina</option>
-              </select>
-            </div>
-            <div class="d-flex align-items-center">
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckDefault"
-                />
-                <label class="form-check-label" for="flexCheckDefault">
-                  Solo news salvate
-                </label>
+      <h1 id="title">News Feed</h1>
+      <nav>
+        <div class="filter">
+          <label for="filter_tags">Filtra per tags:</label>
+          <select name="all_tags" id="tags">
+            <option value="all" selected>Tutti i tags</option>
+            <option value="policy">Politica</option>
+            <option value="geography">Geo</option>
+            <option value="tech">Tech</option>
+            <option value="travel">Viaggi</option>
+            <option value="cooking">Cucina</option>
+          </select>
+        </div>
+        <div class="saved">
+          <input type="checkbox" />
+          <label for="checkbox_saved">Solo news salvate</label>
+        </div>
+      </nav>
+      <main>
+        <div>
+          <div class="cards">
+            <div class="top_card">
+              <h2>${article.title}</h2>
+              <button class="bookmark_empty">
+                <i class="fa-regular fa-bookmark"></i>
+              </button>
+              <button class="bookmark_full">
+                <i class="fa-solid fa-bookmark bookmark_full"></i>
+              </button>
+              </div>
+              <h4>pubblicato da ${article.author}</h4>
+              <p>in data ${article.published}</p>
+              <p id="text">
+                ${article.content}
+              </p>
+              <img src="./img/rubber-duck.jpg" alt="Papera_di_gomma" />
+              <div class="tags">
+                <div class="tag">div</div>
+                <div class="tag">div</div>
               </div>
             </div>
           </div>

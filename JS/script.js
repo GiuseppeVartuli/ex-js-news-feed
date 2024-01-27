@@ -61,6 +61,7 @@ Step 2 - Stampa dei dati in pagina
 Prendendo come riferimento il layout di esempio presente nell'HTML stampa in pagina le news del nostro feed utilizzando JavaScript.
 
 */
+
 const articlesEl = document.querySelector(".cards_teplate");
 const tagsEl = document.getElementById("tags");
 
@@ -70,7 +71,6 @@ articlesEl.innerHTML = "";
 
 for (let i = 0; i < news.length; i++) {
   const article = news[i];
-  console.log(article);
 
   const cardMarkup = `
     <div class="cards">
@@ -102,3 +102,43 @@ for (let i = 0; i < news.length; i++) {
 
   articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
 }
+
+tagsEl.addEventListener("change", function () {
+  articlesEl.innerHTML = "";
+  console.log("prova");
+  for (let i = 0; i < news.length; i++) {
+    const article = news[i];
+
+    if (article.tags.includes(tagsEl.value) || tagsEl.value === "all") {
+      const cardMarkup = `
+    <div class="cards">
+      <div class="top_card">
+        <h2>${article.title}</h2>
+        <button class="bookmark_empty">
+          <i class="fa-regular fa-bookmark"></i>
+        </button>
+        <button class="bookmark_full">
+          <i class="fa-solid fa-bookmark bookmark_full"></i>
+        </button>
+      </div>
+      <h4>pubblicato da ${article.author}</h4>
+      <p>in data ${article.published}</p>
+      <p id="text">
+        ${article.content}
+      </p>
+      <img src="${article.img}" alt="Papera_di_gomma" />
+      <div class="container_tags">
+        ${article.tags
+          .map(
+            (tag) =>
+              `<div class="tags" style="background-color: ${tagColors[tag]}">${tag}</div>`
+          )
+          .join("")} 
+      </div>
+    </div>
+  `;
+      console.log("prova2");
+      articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
+    }
+  }
+});

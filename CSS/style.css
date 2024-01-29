@@ -79,3 +79,6 @@ button {
 .bookmark_full {
   display: none;
 }
+.bookmark_empty {
+  display: block;
+}

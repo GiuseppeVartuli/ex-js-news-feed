@@ -56,6 +56,7 @@ const tagColors = {
   politica: "grey",
 };
 console.log(news);
+
 /*
 Step 2 - Stampa dei dati in pagina
 Prendendo come riferimento il layout di esempio presente nell'HTML stampa in pagina le news del nostro feed utilizzando JavaScript.
@@ -76,10 +77,10 @@ for (let i = 0; i < news.length; i++) {
     <div class="cards">
       <div class="top_card">
         <h2>${article.title}</h2>
-        <button class="bookmark_empty">
+        <button id="book_empty" class="bookmark_empty">
           <i class="fa-regular fa-bookmark"></i>
         </button>
-        <button class="bookmark_full">
+        <button id="book_full" class="bookmark_full">
           <i class="fa-solid fa-bookmark bookmark_full"></i>
         </button>
       </div>
@@ -88,7 +89,7 @@ for (let i = 0; i < news.length; i++) {
       <p id="text">
         ${article.content}
       </p>
-      <img src="${article.img}" alt="Papera_di_gomma" />
+      <img src="${article.img}" alt="..." />
       <div class="container_tags">
         ${article.tags
           .map(
@@ -114,10 +115,10 @@ tagsEl.addEventListener("change", function () {
     <div class="cards">
       <div class="top_card">
         <h2>${article.title}</h2>
-        <button class="bookmark_empty">
+        <button id="book_empty" class="bookmark_empty">
           <i class="fa-regular fa-bookmark"></i>
         </button>
-        <button class="bookmark_full">
+        <button id="book_full" class="bookmark_full">
           <i class="fa-solid fa-bookmark bookmark_full"></i>
         </button>
       </div>
@@ -126,7 +127,7 @@ tagsEl.addEventListener("change", function () {
       <p id="text">
         ${article.content}
       </p>
-      <img src="${article.img}" alt="Papera_di_gomma" />
+      <img src="${article.img}" alt="..." />
       <div class="container_tags">
         ${article.tags
           .map(
@@ -142,3 +143,12 @@ tagsEl.addEventListener("change", function () {
     }
   }
 });
+
+/* al click passiamo dal bookmark vuoto al pieno. */
+
+document.getElementById("book_empty").addEventListener("click", changeBookmark);
+
+function changeBookmark() {
+  document.getElementById("book_empty").className = "bookmark_full";
+  document.getElementById("book_full").className = "bookmark_empty";
+}

@@ -5,6 +5,7 @@ Step 1: struttura dei dati
 Partendo dai dati forniti crea le strutture dati necessarie sfruttando array e oggetti facendo attenzione agli attributi che caratterizzano ciascuna news.
 
 */
+const newsSaved = [];
 
 const news = [
   {
@@ -63,7 +64,7 @@ Prendendo come riferimento il layout di esempio presente nell'HTML stampa in pag
 
 */
 
-const articlesEl = document.querySelector(".cards_teplate");
+const articlesEl = document.querySelector("#cards_teplate");
 const tagsEl = document.getElementById("tags");
 
 console.log(tagsEl.value);
@@ -72,17 +73,14 @@ articlesEl.innerHTML = "";
 
 for (let i = 0; i < news.length; i++) {
   const article = news[i];
-
   const cardMarkup = `
     <div class="cards">
       <div class="top_card">
         <h2>${article.title}</h2>
-        <button id="book_empty" class="bookmark_empty">
-          <i class="fa-regular fa-bookmark"></i>
-        </button>
-        <button id="book_full" class="bookmark_full">
-          <i class="fa-solid fa-bookmark bookmark_full"></i>
-        </button>
+        
+        <i class="fa-regular fa-bookmark"></i>
+        
+        
       </div>
       <h4>pubblicato da ${article.author}</h4>
       <p>in data ${article.published}</p>
@@ -112,32 +110,30 @@ tagsEl.addEventListener("change", function () {
 
     if (article.tags.includes(tagsEl.value) || tagsEl.value === "all") {
       const cardMarkup = `
-    <div class="cards">
-      <div class="top_card">
-        <h2>${article.title}</h2>
-        <button id="book_empty" class="bookmark_empty">
+      <div class="cards">
+        <div class="top_card">
+          <h2>${article.title}</h2>
+          
           <i class="fa-regular fa-bookmark"></i>
-        </button>
-        <button id="book_full" class="bookmark_full">
-          <i class="fa-solid fa-bookmark bookmark_full"></i>
-        </button>
+          
+          
+        </div>
+        <h4>pubblicato da ${article.author}</h4>
+        <p>in data ${article.published}</p>
+        <p id="text">
+          ${article.content}
+        </p>
+        <img src="${article.img}" alt="..." />
+        <div class="container_tags">
+          ${article.tags
+            .map(
+              (tag) =>
+                `<div class="tags" style="background-color: ${tagColors[tag]}">${tag}</div>`
+            )
+            .join("")} 
+        </div>
       </div>
-      <h4>pubblicato da ${article.author}</h4>
-      <p>in data ${article.published}</p>
-      <p id="text">
-        ${article.content}
-      </p>
-      <img src="${article.img}" alt="..." />
-      <div class="container_tags">
-        ${article.tags
-          .map(
-            (tag) =>
-              `<div class="tags" style="background-color: ${tagColors[tag]}">${tag}</div>`
-          )
-          .join("")} 
-      </div>
-    </div>
-  `;
+    `;
       console.log("prova2");
       articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
     }
@@ -145,10 +141,45 @@ tagsEl.addEventListener("change", function () {
 });
 
 /* al click passiamo dal bookmark vuoto al pieno. */
-
-document.getElementById("book_empty").addEventListener("click", changeBookmark);
+/*
+document.addEventListener("click", changeBookmark);
 
 function changeBookmark() {
-  document.getElementById("book_empty").className = "bookmark_full";
-  document.getElementById("book_full").className = "bookmark_empty";
+  const element = document.getElementsByClassName("fa-bookmark");
+  element.classList.remove("fa-regular"); // Remove mystyle class
+  element.classList.add("fa-solid"); // Add newone class
+  console.log("prova click");
 }
+
+document.className = "fa-solid";
+document.className = "fa-regular";
+*/
+
+function changeClass(e) {
+  if (e) {
+    e.classList.toggle("fa-regular");
+    e.classList.toggle("fa-solid");
+  }
+}
+
+let cardsContainer = document.getElementById("#cards_teplate");
+
+if (cardsContainer) {
+  cardsContainer.addEventListener("click", function (event) {
+    if (event.target.classList.cointains("fa-bookmark")) {
+      changeClass(event.target);
+    }
+  });
+}
+
+/*
+document.addEventListener("click", function () {
+  let changeBookMark = document.querySelector(".fa-bookmark");
+  if (changeBookMark) {
+    changeBookMark.addEventListener("click", function () {
+      changeClass(this);
+      console.log("sto cliccando");
+    });
+  }
+});
+*/

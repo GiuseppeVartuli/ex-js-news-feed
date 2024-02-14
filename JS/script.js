@@ -1,11 +1,4 @@
-console.log("ciao");
-
-/*
-Step 1: struttura dei dati
-Partendo dai dati forniti crea le strutture dati necessarie sfruttando array e oggetti facendo attenzione agli attributi che caratterizzano ciascuna news.
-
-*/
-const newsSaved = [];
+// struttura dei dati
 
 const news = [
   {
@@ -16,6 +9,7 @@ const news = [
     author: "Diana Rossi",
     published: "2023-02-11",
     img: "img/rubber-duck.jpg",
+    alt: "papera_gigante_di_gomma",
   },
   {
     id: "2",
@@ -25,6 +19,7 @@ const news = [
     author: "Fabio Mari",
     published: "2023-03-14",
     img: "img/deep-sea.jpg",
+    alt: "fondo_marino",
   },
   {
     id: "3",
@@ -35,6 +30,7 @@ const news = [
     author: "Marta Bianchi",
     published: "2023-04-20",
     img: "img/kitchen-food.jpg",
+    alt: "tavola_con_alimenti",
   },
   {
     id: "4",
@@ -45,8 +41,10 @@ const news = [
     author: "Gabriele Neri",
     published: "2023-05-29",
     img: "img/modern-art.jpg",
+    alt: "murales_artisti_emergenti",
   },
 ];
+const newsSaved = [];
 
 const tagColors = {
   geo: "green",
@@ -58,11 +56,7 @@ const tagColors = {
 };
 console.log(news);
 
-/*
-Step 2 - Stampa dei dati in pagina
-Prendendo come riferimento il layout di esempio presente nell'HTML stampa in pagina le news del nostro feed utilizzando JavaScript.
-
-*/
+// creazione in modo dinamico delle cards per le news
 
 const articlesEl = document.querySelector("#cards_teplate");
 const tagsEl = document.getElementById("tags");
@@ -73,21 +67,21 @@ articlesEl.innerHTML = "";
 
 for (let i = 0; i < news.length; i++) {
   const article = news[i];
-  const cardMarkup = `
-    <div class="cards">
+  const cardMarkup = createCardMarkup(article);
+  articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
+}
+
+function createCardMarkup(article) {
+  return `
+    <div class="cards" data-article-id="${article.id}">
       <div class="top_card">
         <h2>${article.title}</h2>
-        
         <i class="fa-regular fa-bookmark"></i>
-        
-        
       </div>
       <h4>pubblicato da ${article.author}</h4>
       <p>in data ${article.published}</p>
-      <p id="text">
-        ${article.content}
-      </p>
-      <img src="${article.img}" alt="..." />
+      <p id="text">${article.content}</p>
+      <img src="${article.img}" alt="${article.alt}" />
       <div class="container_tags">
         ${article.tags
           .map(
@@ -98,88 +92,103 @@ for (let i = 0; i < news.length; i++) {
       </div>
     </div>
   `;
-
-  articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
 }
+
+// tramite select stampiamo le news scegliendo un tag
 
 tagsEl.addEventListener("change", function () {
   articlesEl.innerHTML = "";
-  console.log("prova");
-  for (let i = 0; i < news.length; i++) {
-    const article = news[i];
 
-    if (article.tags.includes(tagsEl.value) || tagsEl.value === "all") {
-      const cardMarkup = `
-      <div class="cards">
-        <div class="top_card">
-          <h2>${article.title}</h2>
-          
-          <i class="fa-regular fa-bookmark"></i>
-          
-          
-        </div>
-        <h4>pubblicato da ${article.author}</h4>
-        <p>in data ${article.published}</p>
-        <p id="text">
-          ${article.content}
-        </p>
-        <img src="${article.img}" alt="..." />
-        <div class="container_tags">
-          ${article.tags
-            .map(
-              (tag) =>
-                `<div class="tags" style="background-color: ${tagColors[tag]}">${tag}</div>`
-            )
-            .join("")} 
-        </div>
-      </div>
-    `;
-      console.log("prova2");
+  const selectedTag = tagsEl.value;
+
+  const filteredNews = news.filter(
+    (article) => article.tags.includes(selectedTag) || selectedTag === "all"
+  );
+
+  if (filteredNews.length === 0) {
+    // Se non ci sono notizie mostra il messaggio "No news available"
+    const noNewsMessage = document.createElement("h1");
+    noNewsMessage.textContent = "No news available";
+    noNewsMessage.classList.add("no_news");
+    articlesEl.appendChild(noNewsMessage);
+  } else {
+    // altrimenti mostra le news disponibili
+    for (let i = 0; i < filteredNews.length; i++) {
+      const article = filteredNews[i];
+      const cardMarkup = createCardMarkup(article);
+
       articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
     }
   }
 });
 
-/* al click passiamo dal bookmark vuoto al pieno. */
-/*
+// al click cambiamo Bookmark
+
 document.addEventListener("click", changeBookmark);
 
-function changeBookmark() {
-  const element = document.getElementsByClassName("fa-bookmark");
-  element.classList.remove("fa-regular"); // Remove mystyle class
-  element.classList.add("fa-solid"); // Add newone class
-  console.log("prova click");
-}
+function changeBookmark(event) {
+  const clickedEl = event.target;
 
-document.className = "fa-solid";
-document.className = "fa-regular";
-*/
+  //  cliccando cambio la classe "fa-bookmark"
+  if (clickedEl.classList.contains("fa-bookmark")) {
+    clickedEl.classList.toggle("fa-regular");
+    clickedEl.classList.toggle("fa-solid");
 
-function changeClass(e) {
-  if (e) {
-    e.classList.toggle("fa-regular");
-    e.classList.toggle("fa-solid");
-  }
-}
+    const articleId = clickedEl.closest(".cards").dataset.articleId;
 
-let cardsContainer = document.getElementById("#cards_teplate");
+    const selectedArticle = news.find((article) => article.id === articleId);
 
-if (cardsContainer) {
-  cardsContainer.addEventListener("click", function (event) {
-    if (event.target.classList.cointains("fa-bookmark")) {
-      changeClass(event.target);
+    if (selectedArticle) {
+      // Se la classe è "fa-solid" viene inserito newsSaved
+      if (clickedEl.classList.contains("fa-solid")) {
+        const isAlreadySaved = newsSaved.some(
+          (savedArticle) => savedArticle.id === selectedArticle.id
+        );
+
+        if (!isAlreadySaved) {
+          newsSaved.push(selectedArticle);
+          console.log("news salvato:", selectedArticle);
+          console.log(newsSaved);
+        }
+      } else {
+        // Se la classe è "fa-regular" rimuove l'articolo da newsSaved
+        const indexToRemove = newsSaved.findIndex(
+          (savedArticle) => savedArticle.id === selectedArticle.id
+        );
+
+        if (indexToRemove !== -1) {
+          newsSaved.splice(indexToRemove, 1);
+          console.log("news rimosso:", selectedArticle);
+          console.log(newsSaved);
+        }
+      }
     }
-  });
+  }
 }
 
-/*
-document.addEventListener("click", function () {
-  let changeBookMark = document.querySelector(".fa-bookmark");
-  if (changeBookMark) {
-    changeBookMark.addEventListener("click", function () {
-      changeClass(this);
-      console.log("sto cliccando");
-    });
+// Funzione per stampare tutte le news salvate
+
+const showSavedCheckbox = document.getElementById("saved_news");
+showSavedCheckbox.addEventListener("change", printSavedNews);
+
+function printSavedNews() {
+  // Se la checkbox è spuntata, stampa le news salvate
+  if (showSavedCheckbox.checked) {
+    articlesEl.innerHTML = "";
+
+    // Itera attraverso le news salvate e crea il markup
+    for (let i = 0; i < newsSaved.length; i++) {
+      const savedArticle = newsSaved[i];
+      const cardMarkup = createCardMarkup(savedArticle);
+      articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
+    }
+  } else {
+    // Se la checkbox non è spuntata, ripristina la visualizzazione normale
+    articlesEl.innerHTML = "";
+    for (let i = 0; i < news.length; i++) {
+      const article = news[i];
+      const cardMarkup = createCardMarkup(article);
+      articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
+    }
   }
-});
-*/
+}

@@ -44,6 +44,7 @@ const news = [
     alt: "murales_artisti_emergenti",
   },
 ];
+
 const newsSaved = [];
 
 const tagColors = {
@@ -73,6 +74,9 @@ for (let i = 0; i < news.length; i++) {
 }
 
 function createCardMarkup(article) {
+  // formattazione dalla data americana a quella italiana.
+  const formattedDate = article.published.split("-").reverse().join("/");
+
   return `
     <div class="cards" data-article-id="${article.id}">
       <div class="top_card">
@@ -80,7 +84,7 @@ function createCardMarkup(article) {
         <i class="fa-regular fa-bookmark"></i>
       </div>
       <h4>pubblicato da ${article.author}</h4>
-      <p>in data ${article.published}</p>
+      <p>in data ${formattedDate}</p>
       <p id="text">${article.content}</p>
       <img src="${article.img}" alt="${article.alt}" />
       <div class="container_tags">
@@ -123,49 +127,50 @@ tagsEl.addEventListener("change", function () {
   }
 });
 
-// al click cambiamo Bookmark
+// al click sul bookmark cambia da vuoto a pieno e viceversa
 
-document.addEventListener("click", changeBookmark);
+const bookmarkIcons = document.querySelectorAll(".fa-bookmark");
 
-function changeBookmark(event) {
-  const clickedEl = event.target;
+// Aggiungi un event listener a ciascun'icona di bookmark
+bookmarkIcons.forEach((bookmarkIcon) => {
+  bookmarkIcon.addEventListener("click", (event) => {
+    const clickedEl = event.target;
 
-  //  cliccando cambio la classe "fa-bookmark"
-  if (clickedEl.classList.contains("fa-bookmark")) {
-    clickedEl.classList.toggle("fa-regular");
-    clickedEl.classList.toggle("fa-solid");
+    if (clickedEl.classList.contains("fa-bookmark")) {
+      clickedEl.classList.toggle("fa-regular");
+      clickedEl.classList.toggle("fa-solid");
 
-    const articleId = clickedEl.closest(".cards").dataset.articleId;
+      const articleId = clickedEl.closest(".cards").dataset.articleId;
+      const selectedArticle = news.find((article) => article.id === articleId);
 
-    const selectedArticle = news.find((article) => article.id === articleId);
-
-    if (selectedArticle) {
-      // Se la classe è "fa-solid" viene inserito newsSaved
-      if (clickedEl.classList.contains("fa-solid")) {
-        const isAlreadySaved = newsSaved.some(
-          (savedArticle) => savedArticle.id === selectedArticle.id
-        );
-
-        if (!isAlreadySaved) {
-          newsSaved.push(selectedArticle);
-          console.log("news salvato:", selectedArticle);
-          console.log(newsSaved);
-        }
-      } else {
-        // Se la classe è "fa-regular" rimuove l'articolo da newsSaved
-        const indexToRemove = newsSaved.findIndex(
-          (savedArticle) => savedArticle.id === selectedArticle.id
-        );
-
-        if (indexToRemove !== -1) {
-          newsSaved.splice(indexToRemove, 1);
-          console.log("news rimosso:", selectedArticle);
-          console.log(newsSaved);
-        }
+      if (selectedArticle) {
+        clickedEl.classList.contains("fa-solid")
+          ? updateSavedNews(selectedArticle, true)
+          : updateSavedNews(selectedArticle, false);
       }
     }
+  });
+});
+
+// funzione per aggiungere l'articolo in newsSaved
+const updateSavedNews = (article, isAdding) => {
+  const isAlreadySaved = newsSaved.some(
+    (savedArticle) => savedArticle.id === article.id
+  );
+
+  if (isAdding && !isAlreadySaved) {
+    newsSaved.push(article);
+    console.log("Articolo salvato:", article);
+  } else if (!isAdding && isAlreadySaved) {
+    const indexToRemove = newsSaved.findIndex(
+      (savedArticle) => savedArticle.id === article.id
+    );
+    newsSaved.splice(indexToRemove, 1);
+    console.log("Articolo rimosso:", article);
   }
-}
+
+  console.log(newsSaved);
+};
 
 // Funzione per stampare tutte le news salvate
 
@@ -173,23 +178,47 @@ const showSavedCheckbox = document.getElementById("saved_news");
 showSavedCheckbox.addEventListener("change", printSavedNews);
 
 function printSavedNews() {
-  // Se la checkbox è spuntata, stampa le news salvate
-  if (showSavedCheckbox.checked) {
-    articlesEl.innerHTML = "";
+  // Determina quale array di notizie utilizzare
+  const sourceNews = showSavedCheckbox.checked ? newsSaved : news;
 
-    // Itera attraverso le news salvate e crea il markup
-    for (let i = 0; i < newsSaved.length; i++) {
-      const savedArticle = newsSaved[i];
-      const cardMarkup = createCardMarkup(savedArticle);
+  // Crea la card della news
+  const markup = sourceNews
+    .map((article) => createCardMarkup(article))
+    .join("");
+
+  // Aggiorna il contenuto nella DOM
+  articlesEl.innerHTML = markup;
+}
+
+const selectEl = document.getElementById("tags");
+
+// Aggiungi un event listener per gestire i cambiamenti nella select
+selectEl.addEventListener("change", function () {
+  // Ottieni il valore selezionato dalla select
+  const selectedTag = selectEl.value;
+
+  // Trova l'articolo corrispondente nell'array di news in base al tag selezionato
+  const selectedNews = news.find(
+    (article) => article.tags.includes(selectedTag) || selectedTag === "all"
+  );
+
+  // Se l'articolo è stato trovato
+  if (selectedNews) {
+    // Stampiamo la news
+    console.log("News selezionata tramite tag:", selectedNews);
+
+    // Verifica se la news è già presente nei salvati
+    const isSaved = newsSaved.some(
+      (savedArticle) => savedArticle.id === selectedNews.id
+    );
+
+    // Se la news è nei salvati, stampa un messaggio
+    if (isSaved) {
       articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
+    } else {
+      console.log("News selezionata con bookmark: Non salvata");
     }
   } else {
-    // Se la checkbox non è spuntata, ripristina la visualizzazione normale
-    articlesEl.innerHTML = "";
-    for (let i = 0; i < news.length; i++) {
-      const article = news[i];
-      const cardMarkup = createCardMarkup(article);
-      articlesEl.insertAdjacentHTML("beforeend", cardMarkup);
-    }
+    console.log("Nessuna news disponibile per il tag selezionato.");
   }
-}
+});
